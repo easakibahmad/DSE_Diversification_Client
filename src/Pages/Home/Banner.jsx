@@ -7,7 +7,7 @@ import img4 from "../../assets/swing.jpg";
 
 const Banner = () => {
   return (
-    <div className="w-96 mx-auto my-auto ">
+    <div className="md:w-2/5 mx-auto my-auto ">
       <Carousel>
         <div>
           <img src={img1} />
