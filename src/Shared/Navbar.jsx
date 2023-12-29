@@ -1,6 +1,8 @@
+import { Link } from "react-router-dom";
+
 const Navbar = () => {
   return (
-    <div className="navbar z-10 bg-opacity-30 bg-gradient-to-r from-indigo-500 from-10% via-sky-500 via-30% to-emerald-500 to-90% text-white fixed">
+    <div className="navbar z-10 bg-opacity-30 text-white fixed shadow-2xl">
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -56,7 +58,7 @@ const Navbar = () => {
         </ul>
       </div>
       <div className="navbar-end">
-        <a className="btn">Signup Now</a>
+        <Link to="/login" className="btn">Login</Link>
       </div>
     </div>
   );

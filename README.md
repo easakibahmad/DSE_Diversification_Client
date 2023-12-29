@@ -26,4 +26,4 @@
 
 1. routes setup
 2. npm i react-responsive-carousel
-3. 
+3. npm i react-hook-form

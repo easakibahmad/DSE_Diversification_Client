@@ -1,9 +1,9 @@
 import { Carousel } from "react-responsive-carousel";
 import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
-import img1 from "../../assets/turtle.jpeg";
-import img2 from "../../assets/mean.png";
-import img3 from "../../assets/pullback.jpg";
-import img4 from "../../assets/swing.jpg";
+import img1 from "../assets/turtle.jpeg";
+import img2 from "../assets/mean.png";
+import img3 from "../assets/pullback.jpg";
+import img4 from "../assets/swing.jpg";
 
 const Banner = () => {
   return (
