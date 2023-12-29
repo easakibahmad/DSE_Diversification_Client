@@ -25,3 +25,5 @@
 # project setup ( part 2 )
 
 1. routes setup
+2. npm i react-responsive-carousel
+3. 
