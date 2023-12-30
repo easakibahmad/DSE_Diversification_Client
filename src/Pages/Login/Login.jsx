@@ -1,41 +1,14 @@
 import { useContext } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Provider/AuthProvider";
 import Swal from "sweetalert2";
 import "animate.css";
 
 const Login = () => {
   const { signIn } = useContext(AuthContext);
-
-  // const handleLogin = (event) => {
-  //   event.preventDefault();
-  //   const form = event.target;
-  //   const email = form.email.value;
-  //   const password = form.password.value;
-  //   console.log(email, password);
-
-  //   signIn(email, password).then((result) => {
-  //     const user = result.user;
-  //     console.log(user);
-  //     Swal.fire({
-  //       title: "You have been logged out successfully",
-  //       showClass: {
-  //         popup: `
-  //     animate__animated
-  //     animate__fadeInUp
-  //     animate__faster
-  //   `,
-  //       },
-  //       hideClass: {
-  //         popup: `
-  //     animate__animated
-  //     animate__fadeOutDown
-  //     animate__faster
-  //   `,
-  //       },
-  //     });
-  //   });
-  // };
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from = location.state?.from?.pathname || "/";
 
   const handleLogin = async (event) => {
     event.preventDefault();
@@ -66,6 +39,7 @@ const Login = () => {
           `,
         },
       });
+      navigate(from, { replace: true });
     } catch (error) {
       // Handle authentication error
       console.error("Authentication error:", error);
@@ -107,6 +81,7 @@ const Login = () => {
                   name="email"
                   placeholder="email"
                   className="input input-bordered"
+                  required
                 />
               </div>
               <div className="form-control">
@@ -118,6 +93,7 @@ const Login = () => {
                   name="password"
                   placeholder="password"
                   className="input input-bordered"
+                  required
                 />
                 <label className="label">
                   <a href="#" className="label-text-alt link link-hover">

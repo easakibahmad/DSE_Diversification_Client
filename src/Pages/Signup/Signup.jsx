@@ -1,8 +1,9 @@
 import { useContext } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Provider/AuthProvider";
-
+import Swal from "sweetalert2";
+import "animate.css";
 const SignUp = () => {
   const {
     register,
@@ -10,13 +11,37 @@ const SignUp = () => {
     formState: { errors },
   } = useForm();
 
+  const navigate = useNavigate();
   const { createUser } = useContext(AuthContext);
 
   const onSubmit = (data) => {
     console.log(data);
     createUser(data.email, data.password).then((result) => {
       console.log(result.user);
+      Swal.fire({
+        title: "You have been signed in successfully",
+        showClass: {
+          popup: `
+            animate__animated
+            animate__fadeInUp
+            animate__faster
+          `,
+        },
+        hideClass: {
+          popup: `
+            animate__animated
+            animate__fadeOutDown
+            animate__faster
+          `,
+        },
+      }).then((result) => {
+        if (result.isConfirmed || result.dismiss === Swal.DismissReason.close) {
+          // If the user confirmed or closed the modal, navigate to the home page
+          navigate("/");
+        }
+      });
     });
+    // navigate("/");
   };
 
   return (

@@ -1,13 +1,33 @@
 import { useContext } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../Provider/AuthProvider";
+import Swal from "sweetalert2";
+import "animate.css";
 
 const Navbar = () => {
   const { user, logOut } = useContext(AuthContext);
 
   const handleLogOut = () => {
     logOut()
-      .then(() => {})
+      .then(() => {
+        Swal.fire({
+          title: "You have been logged out successfully",
+          showClass: {
+            popup: `
+            animate__animated
+            animate__fadeInUp
+            animate__faster
+          `,
+          },
+          hideClass: {
+            popup: `
+            animate__animated
+            animate__fadeOutDown
+            animate__faster
+          `,
+          },
+        });
+      })
       .catch((err) => console.log(err));
   };
   return (
@@ -35,7 +55,7 @@ const Navbar = () => {
             className="menu  menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-gradient-to-r from-indigo-500 font-bold rounded w-52"
           >
             <li>
-              <a>Our Services</a>
+              <Link to="/services">Our Services</Link>
             </li>
             <li>
               <a>Investing Basics</a>
@@ -48,12 +68,12 @@ const Navbar = () => {
             </li>
           </ul>
         </div>
-        <a className="btn btn-ghost text-xl">DSE Diversification</a>
+        <Link to="/" className="btn btn-ghost text-xl">DSE Diversification</Link>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
           <li>
-            <a>Our Services</a>
+            <Link to="/services">Our Services</Link>
           </li>
           <li>
             <a>Investing Basics</a>
