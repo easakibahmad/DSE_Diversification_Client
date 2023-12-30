@@ -1,5 +1,7 @@
+import { useContext } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../../Provider/AuthProvider";
 
 const SignUp = () => {
   const {
@@ -8,8 +10,13 @@ const SignUp = () => {
     formState: { errors },
   } = useForm();
 
+  const { createUser } = useContext(AuthContext);
+
   const onSubmit = (data) => {
     console.log(data);
+    createUser(data.email, data.password).then((result) => {
+      console.log(result.user);
+    });
   };
 
   return (
@@ -82,7 +89,10 @@ const SignUp = () => {
             </form>
             <p className="pl-8 pb-4">
               <small>
-                Already have an account? <Link className="text-blue-600" to="/login">Login</Link>
+                Already have an account?{" "}
+                <Link className="text-blue-600" to="/login">
+                  Login
+                </Link>
               </small>
             </p>
           </div>

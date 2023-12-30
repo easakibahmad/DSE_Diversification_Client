@@ -27,3 +27,6 @@
 1. routes setup
 2. npm i react-responsive-carousel
 3. npm i react-hook-form
+4. npm install firebase
+5. npm install sweetalert2
+6. npm install animate.css --save
