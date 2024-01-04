@@ -30,3 +30,7 @@
 4. npm install firebase
 5. npm install sweetalert2
 6. npm install animate.css --save
+7. install plotlyjs
+8. npm install papaparse
+9. npm install react-spring
+
