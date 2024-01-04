@@ -1,5 +1,5 @@
 import { useState } from "react";
-import Turtle from "./Turtle";
+import "../Styles/ServiceSelectionInput.css";
 
 const ServiceSelectInput = () => {
   const [selectedOption, setSelectedOption] = useState(null);
@@ -18,10 +18,10 @@ const ServiceSelectInput = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-4 mt-6 mx-4">
+    <div className="grid grid-cols-1 gap-8 mt-6 mx-4">
       <p className="text-xl font-bold">Choose a trading strategy:</p>
       <form className="grid grid-cols-4">
-        <label>
+        <label className="slabel">
           <input
             type="radio"
             value="Turtle Trading Strategy"
@@ -30,7 +30,7 @@ const ServiceSelectInput = () => {
           />
           Turtle Trading Strategy
         </label>
-        <label>
+        <label className="slabel">
           <input
             type="radio"
             value="Mean Reversion Trading Strategy"
@@ -39,7 +39,7 @@ const ServiceSelectInput = () => {
           />
           Mean Reversion Trading Strategy
         </label>
-        <label>
+        <label className="slabel">
           <input
             type="radio"
             value="Pullback Trading Strategy"
@@ -48,7 +48,7 @@ const ServiceSelectInput = () => {
           />
           Pullback Trading Strategy
         </label>
-        <label>
+        <label className="slabel">
           <input
             type="radio"
             value="Swing Trading Strategy"
@@ -60,27 +60,29 @@ const ServiceSelectInput = () => {
       </form>
       <div>
         <label>
-          Enter a positive number:
+          <span className=" text-xl font-bold">Initial Capital:</span>
           <input
             className="text-black ml-2 px-2 py-1 rounded outline-none"
             type="text"
             value={value}
             onChange={handleInputChange}
-            placeholder="Enter a number"
+            placeholder="Enter your initial capital"
           />
         </label>
-        <p>
-          {value > 0
-            ? `Valid input: ${value}`
-            : "Please enter a positive number."}
-        </p>
       </div>
-      <p>{`Selected trading strategy: ${selectedOption || "None"}`}</p>
-      {selectedOption === "Turtle Trading Strategy" && value? (
-        <Turtle></Turtle>
-      ) : (
-        `${selectedOption}`
-      )}
+      <p>
+        <span className=" text-xl font-bold">You selected: </span>
+        <span className="text-2xl font-bold text-green-700 bg-white px-4 py-1 rounded-md">
+          {" "}
+          {`${selectedOption || "None"}`}
+        </span>
+      </p>
+      <p>
+        <span className=" text-xl font-bold">Your initial capital: </span>
+        <span className="text-2xl font-bold text-green-700 bg-white px-4 py-1 rounded-md">{`$${
+          value || 0
+        }`}</span>
+      </p>
     </div>
   );
 };

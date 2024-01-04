@@ -1,0 +1,8 @@
+.slabel{
+    border-radius: 5px;
+        background-color: green;
+        color: white;
+        font-size: larger;
+        margin: auto;
+        padding: 3px;
+}
