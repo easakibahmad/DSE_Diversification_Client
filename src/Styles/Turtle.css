@@ -17,13 +17,12 @@
 }
 
 .labelForCsv {
-    width: 150px;
     border-radius: 5px;
     background-color: green;
     color: white;
     font-size: larger;
     margin: auto;
-    padding: 3px;
+    padding: 10px;
 }
 
 #csvInput {
