@@ -369,6 +369,321 @@ const Turtle = () => {
     console.log(`Final capital: ${Math.round(finalCapital, 2)}`);
     console.log("-".repeat(50));
   };
+
+  // for mean reversion
+  function calculateZScore(arr) {
+    const mean = arr.reduce((sum, value) => sum + value, 0) / arr.length;
+    const variance =
+      arr.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) /
+      arr.length;
+    const stdDev = Math.sqrt(variance);
+
+    return arr.map((value) => (value - mean) / stdDev);
+  }
+
+  function calculateRSI(data, window = 14) {
+    const dailyReturns = [];
+    const gains = [];
+    const losses = [];
+    const avgGains = [];
+    const avgLosses = [];
+    const rs = [];
+    const rsi = [];
+
+    // Calculate daily price changes
+    for (let i = 1; i < data.length; i++) {
+      dailyReturns.push(data[i].Price - data[i - 1].Price);
+    }
+
+    // Calculate gains and losses
+    for (let i = 0; i < dailyReturns.length; i++) {
+      gains.push(Math.max(dailyReturns[i], 0));
+      losses.push(-Math.min(dailyReturns[i], 0));
+    }
+
+    // Calculate average gains and losses over the specified window
+    for (let i = 0; i < gains.length; i++) {
+      const startIdx = Math.max(0, i - window + 1);
+      const endIdx = i + 1;
+
+      const avgGain =
+        gains.slice(startIdx, endIdx).reduce((sum, gain) => sum + gain, 0) /
+        window;
+      const avgLoss =
+        losses.slice(startIdx, endIdx).reduce((sum, loss) => sum + loss, 0) /
+        window;
+
+      avgGains.push(avgGain);
+      avgLosses.push(avgLoss);
+    }
+
+    // Calculate relative strength (RS)
+    for (let i = 0; i < avgGains.length; i++) {
+      rs.push(avgGains[i] / avgLosses[i]);
+    }
+
+    // Calculate relative strength index (RSI)
+    for (let i = 0; i < rs.length; i++) {
+      rsi.push(100 - 100 / (1 + rs[i]));
+    }
+
+    return rsi;
+  }
+
+  function calculateStochastic(data, kWindow = 14, dWindow = 3) {
+    const kValues = [];
+    const dValues = [];
+
+    for (let i = 0; i < data.length; i++) {
+      const currentPrice = data[i].Price;
+      const low14 = Math.min(
+        ...data
+          .slice(Math.max(0, i - kWindow + 1), i + 1)
+          .map((item) => item.Low)
+      );
+      const high14 = Math.max(
+        ...data
+          .slice(Math.max(0, i - kWindow + 1), i + 1)
+          .map((item) => item.High)
+      );
+
+      // Calculate %K
+      const percentK = ((currentPrice - low14) / (high14 - low14)) * 100;
+      kValues.push(percentK);
+
+      // Calculate %D
+      if (i >= kWindow - 1) {
+        const avgPercentK =
+          kValues
+            .slice(i - kWindow + 1, i + 1)
+            .reduce((sum, value) => sum + value, 0) / kWindow;
+        dValues.push(avgPercentK);
+
+        // Calculate smoothed %D
+        if (i >= kWindow + dWindow - 1) {
+          const avgPercentD =
+            dValues
+              .slice(i - dWindow + 1, i + 1)
+              .reduce((sum, value) => sum + value, 0) / dWindow;
+          dValues[dValues.length - 1] = avgPercentD;
+        }
+      } else {
+        dValues.push(null); // %D is not available until there are enough %K values
+      }
+    }
+
+    return { percentK: kValues, percentD: dValues };
+  }
+
+  const applyMeanReversionTrading = () => {
+    const longWindow = 50;
+    const entryZScoreThreshold = -1.5;
+    const entryRSIThreshold = 30;
+    const entryStochasticThreshold = 20;
+    const exitZScoreThreshold = 1.5;
+    const exitRSIThreshold = 70;
+    const exitStochasticThreshold = 80;
+    const fees = 0.001;
+
+    // Extract Price values from data
+    const prices = data.map((item) => item.Price);
+
+    // Calculate Z-score, RSI, and Stochastic indicators
+    const zScoreValues = calculateZScore(prices);
+    const rsiValues = calculateRSI(prices);
+    const stochasticValues = calculateStochastic(data);
+
+    let capital = 100000;
+    let stocks = 0;
+    const positions = [];
+    const buyPointsX = [];
+    const buyPointsY = [];
+    const sellPointsX = [];
+    const sellPointsY = [];
+
+    console.log("-".repeat(50));
+    console.log(`Initial capital: ${capital}`);
+    console.log("-".repeat(50));
+
+    let inPosition = false;
+
+    for (let i = longWindow; i < data.length; i++) {
+      if (
+        (zScoreValues[i] < entryZScoreThreshold ||
+          rsiValues[i] < entryRSIThreshold ||
+          stochasticValues.percentK[i] < entryStochasticThreshold) &&
+        !inPosition
+      ) {
+        const price = data[i].Price;
+        const purchaseCapAmount = capital * (1.0 - fees);
+        stocks += Math.floor(purchaseCapAmount / price);
+        capital -= stocks * price;
+        positions.push({ time: i, date: data[i].Date, price });
+        buyPointsX.push(data[i].Date);
+        buyPointsY.push(price);
+        inPosition = true;
+        console.log(
+          "Enter position at",
+          price,
+          "buy",
+          stocks,
+          "date",
+          data[i].Date
+        );
+      } else if (
+        (zScoreValues[i] > exitZScoreThreshold ||
+          rsiValues[i] > exitRSIThreshold ||
+          stochasticValues.percentK[i] > exitStochasticThreshold) &&
+        inPosition
+      ) {
+        const price = data[i].Price;
+        capital += stocks * price * (1 - fees);
+        stocks = 0;
+        sellPointsX.push(data[i].Date);
+        sellPointsY.push(price);
+        console.log(
+          "Exit position at",
+          price,
+          "capital",
+          capital,
+          "date",
+          data[i].Date
+        );
+        inPosition = false;
+      }
+    }
+
+    const finalCapital =
+      capital + Math.abs(stocks) * data[data.length - 1].Price;
+
+    console.log("-".repeat(50));
+    console.log(`Final capital: ${Math.round(finalCapital, 2)}`);
+    console.log("-".repeat(50));
+  };
+
+  // swing trading
+  // Function to calculate Exponential Moving Average (EMA)
+  function calculateEMA(prices, period) {
+    const multiplier = 2 / (period + 1);
+    let ema =
+      prices.slice(0, period).reduce((sum, price) => sum + price, 0) / period;
+
+    for (let i = period; i < prices.length; i++) {
+      ema = (prices[i] - ema) * multiplier + ema;
+    }
+
+    return ema;
+  }
+
+  const applySwingTradingStrategy = () => {
+    const initialCapital = 100000;
+    const shortEmaPeriod = 9;
+    const midEmaPeriod = 13;
+    const longEmaPeriod = 50;
+
+    let capital = initialCapital; // Initial capital
+    let stocks = 0; // The initial amount of stocks
+    const fees = 0.001; // Fees as 0.1%
+    const positions = []; // List to keep current positions
+    const buyPointsX = []; // X-coordinates for buy points
+    const buyPointsY = []; // Y-coordinates for buy points
+    const sellPointsX = []; // X-coordinates for sell points
+    const sellPointsY = []; // Y-coordinates for sell points
+
+    console.log("-".repeat(50));
+    console.log(`Initial capital for : ${capital}`);
+    console.log("-".repeat(50));
+
+    // Calculate exponential moving averages
+    for (let i = longEmaPeriod; i < data.length; i++) {
+      const shortEma = calculateEMA(
+        data.slice(0, i + 1).map((item) => item.Price),
+        shortEmaPeriod
+      );
+      const midEma = calculateEMA(
+        data.slice(0, i + 1).map((item) => item.Price),
+        midEmaPeriod
+      );
+      const longEma = calculateEMA(
+        data.slice(0, i + 1).map((item) => item.Price),
+        longEmaPeriod
+      );
+
+      data[i].Short_EMA = shortEma;
+      data[i].Mid_EMA = midEma;
+      data[i].Long_EMA = longEma;
+    }
+
+    // The simulation loop
+    let inPosition = false; // Flag to track if currently in a position
+    let entryPrice = 0; // Initialize entry price
+    let stopLoss = 0; // Initialize stop loss
+
+    for (let i = longEmaPeriod; i < data.length; i++) {
+      const shortEma = data[i].Short_EMA;
+      const midEma = data[i].Mid_EMA;
+
+      // Long Entry Condition
+      if (shortEma > midEma && midEma > data[i].Long_EMA && !inPosition) {
+        const price = data[i].Price;
+        const purchaseCapAmount = capital * (1.0 - fees);
+        stocks += Math.floor(purchaseCapAmount / price);
+        capital -= stocks * price;
+        positions.push({ time: i, date: data[i].Date, price });
+        buyPointsX.push(data[i].Date);
+        buyPointsY.push(price);
+        inPosition = true; // Set flag to indicate in a position
+        entryPrice = price; // Set entry price
+        stopLoss = entryPrice - 0.05 * entryPrice; // Set stop loss
+        console.log(
+          `Long Enter position at ${price}, buy ${stocks}, date ${data[i].Date}`
+        );
+      }
+
+      // Short Entry Condition
+      else if (shortEma < midEma && !inPosition) {
+        const price = data[i].Price;
+        const purchaseCapAmount = capital * (1.0 - fees);
+        stocks -= Math.floor(purchaseCapAmount / price);
+        capital += stocks * price;
+        positions.push({ time: i, date: data[i].Date, price });
+        buyPointsX.push(data[i].Date);
+        buyPointsY.push(price);
+        inPosition = true; // Set flag to indicate in a position
+        entryPrice = price; // Set entry price
+        stopLoss = entryPrice + 0.05 * entryPrice; // Set stop loss
+        console.log(
+          `Short Enter position at ${price}, short ${stocks}, date ${data[i].Date}`
+        );
+      }
+
+      // Exit Condition
+      else if (shortEma < midEma && inPosition) {
+        const price = data[i].Price;
+        capital += Math.abs(stocks) * price * (1 - fees);
+        stocks = 0;
+        sellPointsX.push(data[i].Date);
+        sellPointsY.push(price);
+        console.log(
+          `Exit position at ${price}, capital ${capital}, date ${data[i].Date}, stopLoss ${stopLoss}`
+        );
+        inPosition = false; // Set flag to indicate position is closed
+
+        if (stocks > 0 || stocks < 0) {
+          stopLoss = 0; // Reset stop loss for long position
+        }
+      }
+    }
+
+    // Calculate the final capital
+    const finalCapital =
+      capital + Math.abs(stocks) * data[data.length - 1].Price;
+
+    console.log("-".repeat(50));
+    console.log(`Capital at the end for : ${Math.round(finalCapital, 2)}`);
+    console.log("-".repeat(50));
+  };
+
   return (
     <div>
       {/* input part started  */}
@@ -458,6 +773,8 @@ const Turtle = () => {
           <button onClick={handleParse}>Parse</button>
           <button onClick={applyTurtleTrading}>Turtle</button>
           <button onClick={applyPullbackTrading}>Pullback</button>
+          <button onClick={applyMeanReversionTrading}>MeanReversion</button>
+          <button onClick={applySwingTradingStrategy}>Swing</button>
         </div>
         {/* <div style={{ marginTop: "3rem" }}>
           {error
