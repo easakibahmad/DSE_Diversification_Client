@@ -285,6 +285,90 @@ const Turtle = () => {
     console.log("-".repeat(50));
   };
 
+  const applyPullbackTrading = () => {
+    const initialCapital = 100000;
+    const pullbackWindow = 10;
+    const entryThreshold = 0.02;
+    const exitThreshold = 0.01;
+
+    // Initialize variables
+    let capital = initialCapital;
+    let stocks = 0;
+    const fees = 0.001;
+    const positions = [];
+    // const successHistory = [];
+    // const failureHistory = [];
+    const buyPointsX = [];
+    const buyPointsY = [];
+    const sellPointsX = [];
+    const sellPointsY = [];
+
+    console.log("-".repeat(50));
+    console.log(`Initial capital: ${capital}`);
+    console.log("-".repeat(50));
+
+    // The simulation loop
+    let inPosition = false; // Flag to track if currently in a position
+    let entryPrice = 0; // Initialize entry price
+
+    for (let i = pullbackWindow; i < data.length; i++) {
+      const currentPrice = data[i].Price;
+      const high = Math.max(
+        ...data.slice(i - pullbackWindow, i).map((item) => item.High)
+      );
+
+      // Calculate the price change from the most recent high
+      const priceChange = (currentPrice - high) / high;
+
+      // Check for entering a pullback position
+      if (priceChange < -entryThreshold && !inPosition) {
+        const price = currentPrice;
+        const purchaseCapAmount = capital * (1.0 - fees);
+        stocks += Math.floor(purchaseCapAmount / price);
+        capital -= stocks * price;
+        positions.push({ time: i, date: data[i].Date, price });
+        buyPointsX.push(data[i].Date);
+        buyPointsY.push(price);
+        inPosition = true; // Set flag to indicate in a position
+        entryPrice = price; // Set entry price
+        console.log(
+          "Enter pullback position at",
+          price,
+          "buy",
+          stocks,
+          "date",
+          data[i].Date
+        );
+      }
+
+      // Check for exiting a pullback position
+      else if (priceChange > exitThreshold && inPosition) {
+        const price = currentPrice;
+        capital += stocks * price * (1 - fees);
+        stocks = 0;
+        sellPointsX.push(data[i].Date);
+        sellPointsY.push(price);
+        console.log(
+          "Exit pullback position at",
+          price,
+          "capital",
+          capital,
+          "date",
+          data[i].Date
+        );
+        inPosition = false; // Set flag to indicate position is closed
+        console.log("Entry Price:", entryPrice); // Log entry price
+      }
+    }
+
+    // Calculate the final capital
+    const finalCapital =
+      capital + Math.abs(stocks) * data[data.length - 1].Price;
+
+    console.log("-".repeat(50));
+    console.log(`Final capital: ${Math.round(finalCapital, 2)}`);
+    console.log("-".repeat(50));
+  };
   return (
     <div>
       {/* input part started  */}
@@ -373,6 +457,7 @@ const Turtle = () => {
         <div>
           <button onClick={handleParse}>Parse</button>
           <button onClick={applyTurtleTrading}>Turtle</button>
+          <button onClick={applyPullbackTrading}>Pullback</button>
         </div>
         {/* <div style={{ marginTop: "3rem" }}>
           {error
