@@ -112,115 +112,249 @@ const Turtle = () => {
     reader.readAsText(file);
   };
 
+  // const applyTurtleTrading = () => {
+  //   const initialCapital = 80000;
+
+  //   // Create the "Close_1_shift" column with the previous day's "Price" value
+  //   for (let i = 1; i < data.length; i++) {
+  //     data[i]["Close_1_shift"] = data[i - 1]["Price"];
+  //   }
+
+  //   // True Range calculation
+  //   for (let i = 0; i < data.length; i++) {
+  //     const high = data[i]["High"];
+  //     const low = data[i]["Low"];
+  //     const close1Shift = data[i]["Close_1_shift"];
+
+  //     // Handling the first iteration separately
+  //     if (i === 0) {
+  //       data[i]["Close_1_shift"] = data[i]["Price"]; // Set Close_1_shift to the current day's Price for the first row
+  //       data[i]["TR"] = 0; // Set TR to 0 for the first row
+  //     } else {
+  //       // Check if any of the values (high, low, close1Shift) are undefined or NaN
+  //       if (
+  //         high !== undefined &&
+  //         low !== undefined &&
+  //         close1Shift !== undefined &&
+  //         !isNaN(high) &&
+  //         !isNaN(low) &&
+  //         !isNaN(close1Shift)
+  //       ) {
+  //         data[i]["TR"] = Math.max(
+  //           high - low,
+  //           Math.max(Math.abs(close1Shift - high), Math.abs(close1Shift - low))
+  //         );
+  //       } else {
+  //         data[i]["TR"] = 0; // Set TR to 0 if any of the values are undefined or NaN
+  //       }
+  //     }
+
+  //     // Check if the "Date" field is empty
+  //     if (!data[i]["Date"]) {
+  //       data[i]["Date"] = "Unknown"; // Set a default value if "Date" is empty
+  //     }
+  //   }
+
+  //   // Log "Close_1_shift" and "TR" values
+  //   // for (let i = 0; i < data.length; i++) {
+  //   //   const close1Shift = data[i]["Close_1_shift"];
+  //   //   const tr = data[i]["TR"];
+
+  //   //   console.log(
+  //   //     `Date: ${data[i]["Date"]}, Close_1_shift: ${close1Shift}, TR: ${tr}`
+  //   //   );
+  //   // }
+
+  //   // The N value from Turtle Algorithm
+  //   const nArray = new Array(data.length).fill(0);
+  //   nArray[20] =
+  //     data.slice(0, 20).reduce((sum, row) => sum + row["TR"], 0) / 20;
+
+  //   for (let i = 21; i < data.length; i++) {
+  //     nArray[i] = (19.0 * nArray[i - 1] + data[i]["TR"]) / 20.0;
+  //   }
+  //   for (let i = 0; i < data.length; i++) {
+  //     data[i]["N"] = nArray[i];
+  //   }
+
+  //   // console.log(nArray)
+
+  //   // Compute upper and lower bounds based on Turtle Algorithm
+  //   for (let i = 1; i < data.length; i++) {
+  //     data[i]["upper_bound"] = Math.max(
+  //       ...data.slice(i - 19, i).map((row) => row["High"])
+  //     );
+  //     data[i]["lower_bound"] = Math.min(
+  //       ...data.slice(i - 9, i).map((row) => row["Low"])
+  //     );
+  //     //     console.log(
+  //     //   `Iteration ${i}: upper_bound = ${data[i]["upper_bound"]}, lower_bound = ${data[i]["lower_bound"]}`
+  //     // );
+  //   }
+
+  //   // Simulation loop
+  //   let capital = initialCapital / 4.0;
+  //   let stocks = 0;
+  //   const fees = 0.001;
+  //   const positions = [];
+  //   const successHistory = [];
+  //   const failureHistory = [];
+  //   let stopLoss = 0.0;
+
+  //   console.log(`Initial capital:`, capital);
+
+  //   for (let i = 21; i < data.length; i++) {
+  //     // Check for open position
+  //     // console.log(data[i]["Close_1_shift"], data[i]["lower_bound"]);
+  //     console.log(data);
+
+  //     if (
+  //       data[i]["Close_1_shift"] > data[i]["upper_bound"] &&
+  //       positions.length === 0
+  //     ) {
+  //       console.log(data[i]["Close_1_shift"], data[i]["upper_bound"]);
+
+  //       const price = (data[i]["Price"] + data[i]["Open"]) / 2.0;
+  //       console.log(price);
+  //       const purchaseCapAmount = capital * (1.0 - fees);
+  //       stocks += Math.round(purchaseCapAmount / price, 4);
+  //       capital = 0.0;
+  //       stopLoss = price - 2.0 * data[i]["N"];
+  //       positions.push({ time: i, date: data[i]["Date"], price });
+
+  //       console.log(
+  //         "Open position at",
+  //         price,
+  //         "buy",
+  //         stocks,
+  //         "date",
+  //         data[i]["Date"],
+  //         "Stop loss at",
+  //         stopLoss
+  //       );
+  //     }
+
+  //     // Check to close position
+  //     else if (
+  //       positions.length > 0 &&
+  //       (data[i]["Close_1_shift"] < data[i]["lower_bound"] ||
+  //         data[i]["Close_1_shift"] < stopLoss ||
+  //         i === data.length - 1)
+  //     ) {
+  //       const price = (data[i]["Price"] + data[i]["Open"]) / 2.0;
+  //       capital = stocks * price * (1 - fees);
+  //       stopLoss = 0.0;
+  //       stocks = 0.0;
+
+  //       console.log(
+  //         "Close position at",
+  //         price,
+  //         "capital",
+  //         capital,
+  //         "date",
+  //         data[i]["Date"]
+  //       );
+
+  //       if (positions[positions.length - 1].price < price) {
+  //         for (const p of positions) {
+  //           successHistory.push({
+  //             date: [p.date, data[i]["Date"]],
+  //             price: [p.price, price],
+  //           });
+  //         }
+  //       } else {
+  //         for (const p of positions) {
+  //           failureHistory.push({
+  //             date: [p.date, data[i]["Date"]],
+  //             price: [p.price, price],
+  //           });
+  //         }
+  //       }
+  //       positions.length = 0;
+  //     }
+  //   }
+
+  //   // Calculate and print success rate
+  //   const totalPositions = successHistory.length + failureHistory.length;
+  //   const successRate =
+  //     totalPositions > 0 ? successHistory.length / totalPositions : 0;
+
+  //   console.log("-".repeat(50));
+  //   console.log(`Success rate:`, successRate);
+  //   console.log(`Capital at the end:`, capital);
+  //   console.log("-".repeat(50));
+  // };
+
   const applyTurtleTrading = () => {
-    const initialCapital = 80000;
+    const csv_filename = "csv";
+    const initial_capital = 100000;
 
-    // Create the "Close_1_shift" column with the previous day's "Price" value
-    for (let i = 1; i < data.length; i++) {
-      data[i]["Close_1_shift"] = data[i - 1]["Price"];
+    // Process data similar to Python code
+    const df_1d = {
+      Close_1_shift: data.map((entry) => entry.Price),
+      TR: data.map((entry) => Math.abs(entry.High - entry.Low)),
+      N: [],
+      upper_bound: [],
+      lower_bound: [],
+      Price: data.map((entry) => entry.Price),
+      Open: data.map((entry) => entry.Open),
+      Date: data.map((entry) => entry.Date),
+    };
+
+    df_1d["TR"] = df_1d["TR"].map((tr, index) =>
+      Math.max(
+        tr,
+        Math.abs(df_1d["Close_1_shift"][index] - data[index].High),
+        Math.abs(df_1d["Close_1_shift"][index] - data[index].Low)
+      )
+    );
+
+    let n_array = df_1d["TR"].slice();
+    n_array[20] =
+      df_1d["TR"].slice(0, 20).reduce((sum, tr) => sum + tr, 0) / 20;
+
+    for (let i = 21; i < df_1d["TR"].length; i++) {
+      n_array[i] = (19.0 * n_array[i - 1] + df_1d["TR"][i]) / 20.0;
     }
 
-    // True Range calculation
-    for (let i = 0; i < data.length; i++) {
-      const high = data[i]["High"];
-      const low = data[i]["Low"];
-      const close1Shift = data[i]["Close_1_shift"];
+    df_1d["N"] = n_array;
 
-      // Handling the first iteration separately
-      if (i === 0) {
-        data[i]["Close_1_shift"] = data[i]["Price"]; // Set Close_1_shift to the current day's Price for the first row
-        data[i]["TR"] = 0; // Set TR to 0 for the first row
-      } else {
-        // Check if any of the values (high, low, close1Shift) are undefined or NaN
-        if (
-          high !== undefined &&
-          low !== undefined &&
-          close1Shift !== undefined &&
-          !isNaN(high) &&
-          !isNaN(low) &&
-          !isNaN(close1Shift)
-        ) {
-          data[i]["TR"] = Math.max(
-            high - low,
-            Math.max(Math.abs(close1Shift - high), Math.abs(close1Shift - low))
-          );
-        } else {
-          data[i]["TR"] = 0; // Set TR to 0 if any of the values are undefined or NaN
-        }
-      }
-
-      // Check if the "Date" field is empty
-      if (!data[i]["Date"]) {
-        data[i]["Date"] = "Unknown"; // Set a default value if "Date" is empty
-      }
-    }
-
-    // Log "Close_1_shift" and "TR" values
-    // for (let i = 0; i < data.length; i++) {
-    //   const close1Shift = data[i]["Close_1_shift"];
-    //   const tr = data[i]["TR"];
-
-    //   console.log(
-    //     `Date: ${data[i]["Date"]}, Close_1_shift: ${close1Shift}, TR: ${tr}`
-    //   );
-    // }
-
-    // The N value from Turtle Algorithm
-    const nArray = new Array(data.length).fill(0);
-    nArray[20] =
-      data.slice(0, 20).reduce((sum, row) => sum + row["TR"], 0) / 20;
-
-    for (let i = 21; i < data.length; i++) {
-      nArray[i] = (19.0 * nArray[i - 1] + data[i]["TR"]) / 20.0;
-    }
-    for (let i = 0; i < data.length; i++) {
-      data[i]["N"] = nArray[i];
-    }
-
-    // console.log(nArray)
-
-    // Compute upper and lower bounds based on Turtle Algorithm
-    for (let i = 1; i < data.length; i++) {
-      data[i]["upper_bound"] = Math.max(
-        ...data.slice(i - 19, i).map((row) => row["High"])
+    for (let i = 0; i < df_1d["TR"].length; i++) {
+      df_1d["upper_bound"].push(
+        i > 0
+          ? Math.max(...data.slice(0, i).map((entry) => entry.High))
+          : undefined
       );
-      data[i]["lower_bound"] = Math.min(
-        ...data.slice(i - 9, i).map((row) => row["Low"])
+      df_1d["lower_bound"].push(
+        i > 0
+          ? Math.min(...data.slice(0, i).map((entry) => entry.Low))
+          : undefined
       );
-      //     console.log(
-      //   `Iteration ${i}: upper_bound = ${data[i]["upper_bound"]}, lower_bound = ${data[i]["lower_bound"]}`
-      // );
     }
 
-    // Simulation loop
-    let capital = initialCapital / 4.0;
+    let capital = initial_capital / 4.0;
     let stocks = 0;
-    const fees = 0.001;
-    const positions = [];
-    const successHistory = [];
-    const failureHistory = [];
-    let stopLoss = 0.0;
+    let fees = 0.001;
+    let positions = [];
+    let success_history = [];
+    let failure_history = [];
+    let stop_loss = 0; // Declare stop_loss outside the loop
 
-    console.log(`Initial capital:`, capital);
+    console.log("-".repeat(50));
+    console.log(`Initial capital for ${csv_filename}:`, capital);
+    console.log("-".repeat(50));
 
     for (let i = 21; i < data.length; i++) {
-      // Check for open position
-      // console.log(data[i]["Close_1_shift"], data[i]["lower_bound"]);
-      console.log(data);
-
       if (
-        data[i]["Close_1_shift"] > data[i]["upper_bound"] &&
+        df_1d["Close_1_shift"][i] > df_1d["upper_bound"][i] &&
         positions.length === 0
       ) {
-        console.log(data[i]["Close_1_shift"], data[i]["upper_bound"]);
-
-        const price = (data[i]["Price"] + data[i]["Open"]) / 2.0;
-        console.log(price);
-        const purchaseCapAmount = capital * (1.0 - fees);
-        stocks += Math.round(purchaseCapAmount / price, 4);
+        const price = (data[i].Price + data[i].Open) / 2.0;
+        const purchase_cap_amount = capital * (1.0 - fees);
+        stocks += parseFloat((purchase_cap_amount / price).toFixed(4));
         capital = 0.0;
-        stopLoss = price - 2.0 * data[i]["N"];
-        positions.push({ time: i, date: data[i]["Date"], price });
+        stop_loss = price - 2.0 * df_1d["N"][i];
+        positions.push({ time: i, date: data[i].Date, price });
 
         console.log(
           "Open position at",
@@ -228,22 +362,18 @@ const Turtle = () => {
           "buy",
           stocks,
           "date",
-          data[i]["Date"],
+          data[i].Date,
           "Stop loss at",
-          stopLoss
+          stop_loss
         );
-      }
-
-      // Check to close position
-      else if (
+      } else if (
         positions.length > 0 &&
-        (data[i]["Close_1_shift"] < data[i]["lower_bound"] ||
-          data[i]["Close_1_shift"] < stopLoss ||
+        (df_1d["Close_1_shift"][i] < df_1d["lower_bound"][i] ||
+          df_1d["Close_1_shift"][i] < stop_loss ||
           i === data.length - 1)
       ) {
-        const price = (data[i]["Price"] + data[i]["Open"]) / 2.0;
+        const price = (data[i].Price + data[i].Open) / 2.0;
         capital = stocks * price * (1 - fees);
-        stopLoss = 0.0;
         stocks = 0.0;
 
         console.log(
@@ -252,37 +382,69 @@ const Turtle = () => {
           "capital",
           capital,
           "date",
-          data[i]["Date"]
+          data[i].Date
         );
 
         if (positions[positions.length - 1].price < price) {
           for (const p of positions) {
-            successHistory.push({
-              date: [p.date, data[i]["Date"]],
+            success_history.push({
+              date: [p.date, data[i].Date],
               price: [p.price, price],
             });
           }
         } else {
           for (const p of positions) {
-            failureHistory.push({
-              date: [p.date, data[i]["Date"]],
+            failure_history.push({
+              date: [p.date, data[i].Date],
               price: [p.price, price],
             });
           }
         }
+
         positions.length = 0;
       }
+      // else
+      // {
+      //     console.log(
+      //         "No conditions met on date",
+      //         data[i].Date,
+      //         "lower_bound",
+      //         df_1d["lower_bound"][i],
+      //         "upper_bound",
+      //         df_1d["upper_bound"][i],
+      //         "Close_1_shift",
+      //         df_1d["Close_1_shift"][i],
+      //         "stopLoss",
+      //         stop_loss
+      //     );
+      // }
     }
 
-    // Calculate and print success rate
-    const totalPositions = successHistory.length + failureHistory.length;
-    const successRate =
-      totalPositions > 0 ? successHistory.length / totalPositions : 0;
+    const success_rate =
+      (success_history.length /
+        (failure_history.length + success_history.length)) *
+      100;
 
     console.log("-".repeat(50));
-    console.log(`Success rate:`, successRate);
-    console.log(`Capital at the end:`, capital);
+    console.log(`Success rate for ${csv_filename}:`, success_rate);
+    console.log(
+      `Capital at the end for ${csv_filename}:`,
+      Math.round(capital, 2)
+    );
     console.log("-".repeat(50));
+
+    console.log(`Summary of % change in positions for ${csv_filename}:`);
+    for (const h of [failure_history, success_history]) {
+      for (const position of h) {
+        const percent_change = parseFloat(
+          (
+            ((position.price[1] - position.price[0]) / position.price[0]) *
+            100.0
+          ).toFixed(2)
+        );
+        console.log("Percent change in position:", percent_change);
+      }
+    }
   };
 
   const applyPullbackTrading = () => {
