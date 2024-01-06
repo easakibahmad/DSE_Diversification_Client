@@ -8,7 +8,7 @@ import AuthProvider from "./Provider/AuthProvider";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>
-      <div className="bg-gradient-to-r  from-black flex flex-col min-h-screen">
+      <div className="bg-gradient-to-r  from-blue-950	via-emerald-600	to-sky-950			 flex flex-col min-h-screen">
         <RouterProvider router={router} />
       </div>
     </AuthProvider>

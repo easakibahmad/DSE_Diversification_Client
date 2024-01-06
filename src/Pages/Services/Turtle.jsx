@@ -4,11 +4,14 @@ import "../../Styles/Turtle.css";
 import "../../Styles/ServiceSelectionInput.css";
 import { AwesomeButton } from "react-awesome-button";
 import "react-awesome-button/dist/styles.css";
+import TurtleModal from "../../Components/TurtleModal";
 
 const allowedExtensions = ["csv"];
 
 const Turtle = () => {
   const [value, setValue] = useState("");
+  const [iCapital, setICapital] = useState(0);
+  const [eCapital, setECapital] = useState(0);
 
   const handleInputChange = (event) => {
     const inputValue = event.target.value;
@@ -78,7 +81,6 @@ const Turtle = () => {
 
   const applyTurtleTrading = () => {
     const initial_capital = 100000;
-
     // Process data similar to Python code
     const df_1d = {
       Close_1_shift: data.map((entry) => entry.Price),
@@ -132,6 +134,8 @@ const Turtle = () => {
 
     console.log("-".repeat(50));
     console.log(`Initial capital:`, capital);
+    setICapital(capital);
+
     console.log("-".repeat(50));
 
     for (let i = 21; i < data.length; i++) {
@@ -195,14 +199,15 @@ const Turtle = () => {
       }
     }
 
-    const success_rate =
-      (success_history.length /
-        (failure_history.length + success_history.length)) *
-      100;
+    // const success_rate =
+    //   (success_history.length /
+    //     (failure_history.length + success_history.length)) *
+    //   100;
 
     console.log("-".repeat(50));
-    console.log(`Success rate:`, success_rate);
+    // console.log(`Success rate:`, success_rate);
     console.log(`Capital at the end:`, Math.round(capital, 2));
+    setECapital(Math.round(capital, 2));
     console.log("-".repeat(50));
 
     console.log(`Summary of % change in positions:`);
@@ -648,8 +653,12 @@ const Turtle = () => {
             type="file"
           />
         </div>
-        <button onClick={handleParse}>
-          <AwesomeButton type="primary" style={{ width: "100%" }}>
+        <button disabled={!file} onClick={handleParse}>
+          <AwesomeButton
+            type={!file ? "error" : "primary"}
+            style={{ width: "100%" }}
+            disabled={!file}
+          >
             Parse Your Data
           </AwesomeButton>
         </button>
@@ -657,24 +666,52 @@ const Turtle = () => {
 
       {/* input part ended */}
       <div className="container lg:w-4/5">
+        <TurtleModal
+          initialCapital={iCapital}
+          endCapital={eCapital}
+          fileName={file ? file.name : ""}
+        ></TurtleModal>
         <div className="grid grid-cols-1 gap-6">
-          <button onClick={applyTurtleTrading} className="w-full">
-            <AwesomeButton type="primary" style={{ width: "100%" }}>
+          <button
+            disabled={!file}
+            onClick={() => {
+              applyTurtleTrading();
+              document.getElementById("turtle_modal").showModal();
+            }}
+            className="w-full"
+          >
+            <AwesomeButton
+              type="primary"
+              style={{ width: "100%" }}
+              disabled={!file}
+            >
               Apply Turtle Trading Strategy
             </AwesomeButton>
           </button>
-          <button onClick={applyPullbackTrading}>
-            <AwesomeButton type="primary" style={{ width: "100%" }}>
+          <button disabled={!file} onClick={applyPullbackTrading}>
+            <AwesomeButton
+              type="primary"
+              style={{ width: "100%" }}
+              disabled={!file}
+            >
               Apply Pullback Trading Strategy
             </AwesomeButton>
           </button>
-          <button onClick={applyMeanReversionTrading}>
-            <AwesomeButton type="primary" style={{ width: "100%" }}>
+          <button disabled={!file} onClick={applyMeanReversionTrading}>
+            <AwesomeButton
+              type="primary"
+              style={{ width: "100%" }}
+              disabled={!file}
+            >
               Apply Mean Reversion Trading Strategy
             </AwesomeButton>
           </button>
-          <button onClick={applySwingTradingStrategy}>
-            <AwesomeButton type="primary" style={{ width: "100%" }}>
+          <button disabled={!file} onClick={applySwingTradingStrategy}>
+            <AwesomeButton
+              type={!file ? "error" : "primary"}
+              style={{ width: "100%" }}
+              disabled={!file}
+            >
               Apply Swing Trading Strategy
             </AwesomeButton>
           </button>
