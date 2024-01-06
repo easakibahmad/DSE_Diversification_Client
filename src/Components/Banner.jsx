@@ -4,7 +4,6 @@ import img1 from "../assets/turtle.jpeg";
 import img2 from "../assets/mean.png";
 import img3 from "../assets/pullback.jpg";
 import img4 from "../assets/swing.jpg";
-
 const Banner = () => {
   return (
     <div className="md:w-2/5 mx-auto my-auto ">

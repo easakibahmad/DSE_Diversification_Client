@@ -4,7 +4,7 @@ import Banner from "../../Components/Banner";
 const Home = () => {
   return (
     <div>
-      <div className="pt-10 pb-4  bg-fixed shadow-xl">
+      <div className="pt-12 pb-4 ">
         <SectionTitle
           heading={"Make Smarter, Data-Driven Investment Decisions"}
         ></SectionTitle>

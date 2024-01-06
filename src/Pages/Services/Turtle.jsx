@@ -1,19 +1,13 @@
-// export default Turtle;
 import { useState } from "react";
 import Papa from "papaparse";
 import "../../Styles/Turtle.css";
 import "../../Styles/ServiceSelectionInput.css";
+import { AwesomeButton } from "react-awesome-button";
+import "react-awesome-button/dist/styles.css";
 
 const allowedExtensions = ["csv"];
 
 const Turtle = () => {
-  // input part started
-  const [selectedOption, setSelectedOption] = useState(null);
-
-  const handleOptionChange = (event) => {
-    setSelectedOption(event.target.value);
-  };
-
   const [value, setValue] = useState("");
 
   const handleInputChange = (event) => {
@@ -22,12 +16,12 @@ const Turtle = () => {
       setValue(inputValue);
     }
   };
-  // input part ended
 
   const [data, setData] = useState([]);
   const [error, setError] = useState("");
   const [file, setFile] = useState("");
 
+  // take csv file as an input
   const handleFileChange = (e) => {
     setError("");
     if (e.target.files.length) {
@@ -41,35 +35,9 @@ const Turtle = () => {
     }
   };
 
-  // parse CSV
-  // const handleParse = () => {
-  //   if (!file) return alert("Enter a valid file");
-
-  //   const reader = new FileReader();
-
-  //   reader.onload = async ({ target }) => {
-  //     const csv = Papa.parse(target.result, {
-  //       header: true,
-  //     });
-
-  //     const parsedData = csv?.data;
-
-  //     // Transform each row into an array of objects
-  //     const dataArray = parsedData.map((row) => {
-  //       return Object.keys(row).map((key) => ({
-  //         [key]: row[key],
-  //       }));
-  //     });
-  //     console.log(dataArray);
-  //     // dataArray.map((data) => console.log(JSON.stringify(data)));
-  //     setData(dataArray);
-  //   };
-
-  //   reader.readAsText(file);
-  // };
-
+  // csv file parsing
   const handleParse = () => {
-    if (!file) return alert("Enter a valid file");
+    if (!file) return alert("Enter your csv file");
 
     const reader = new FileReader();
 
@@ -103,190 +71,12 @@ const Turtle = () => {
         };
       });
 
-      // transformedData.map((data) => console.log(JSON.stringify(data)));
       setData(transformedData);
-
-      // turtle logic applying started
     };
-
     reader.readAsText(file);
   };
 
-  // const applyTurtleTrading = () => {
-  //   const initialCapital = 80000;
-
-  //   // Create the "Close_1_shift" column with the previous day's "Price" value
-  //   for (let i = 1; i < data.length; i++) {
-  //     data[i]["Close_1_shift"] = data[i - 1]["Price"];
-  //   }
-
-  //   // True Range calculation
-  //   for (let i = 0; i < data.length; i++) {
-  //     const high = data[i]["High"];
-  //     const low = data[i]["Low"];
-  //     const close1Shift = data[i]["Close_1_shift"];
-
-  //     // Handling the first iteration separately
-  //     if (i === 0) {
-  //       data[i]["Close_1_shift"] = data[i]["Price"]; // Set Close_1_shift to the current day's Price for the first row
-  //       data[i]["TR"] = 0; // Set TR to 0 for the first row
-  //     } else {
-  //       // Check if any of the values (high, low, close1Shift) are undefined or NaN
-  //       if (
-  //         high !== undefined &&
-  //         low !== undefined &&
-  //         close1Shift !== undefined &&
-  //         !isNaN(high) &&
-  //         !isNaN(low) &&
-  //         !isNaN(close1Shift)
-  //       ) {
-  //         data[i]["TR"] = Math.max(
-  //           high - low,
-  //           Math.max(Math.abs(close1Shift - high), Math.abs(close1Shift - low))
-  //         );
-  //       } else {
-  //         data[i]["TR"] = 0; // Set TR to 0 if any of the values are undefined or NaN
-  //       }
-  //     }
-
-  //     // Check if the "Date" field is empty
-  //     if (!data[i]["Date"]) {
-  //       data[i]["Date"] = "Unknown"; // Set a default value if "Date" is empty
-  //     }
-  //   }
-
-  //   // Log "Close_1_shift" and "TR" values
-  //   // for (let i = 0; i < data.length; i++) {
-  //   //   const close1Shift = data[i]["Close_1_shift"];
-  //   //   const tr = data[i]["TR"];
-
-  //   //   console.log(
-  //   //     `Date: ${data[i]["Date"]}, Close_1_shift: ${close1Shift}, TR: ${tr}`
-  //   //   );
-  //   // }
-
-  //   // The N value from Turtle Algorithm
-  //   const nArray = new Array(data.length).fill(0);
-  //   nArray[20] =
-  //     data.slice(0, 20).reduce((sum, row) => sum + row["TR"], 0) / 20;
-
-  //   for (let i = 21; i < data.length; i++) {
-  //     nArray[i] = (19.0 * nArray[i - 1] + data[i]["TR"]) / 20.0;
-  //   }
-  //   for (let i = 0; i < data.length; i++) {
-  //     data[i]["N"] = nArray[i];
-  //   }
-
-  //   // console.log(nArray)
-
-  //   // Compute upper and lower bounds based on Turtle Algorithm
-  //   for (let i = 1; i < data.length; i++) {
-  //     data[i]["upper_bound"] = Math.max(
-  //       ...data.slice(i - 19, i).map((row) => row["High"])
-  //     );
-  //     data[i]["lower_bound"] = Math.min(
-  //       ...data.slice(i - 9, i).map((row) => row["Low"])
-  //     );
-  //     //     console.log(
-  //     //   `Iteration ${i}: upper_bound = ${data[i]["upper_bound"]}, lower_bound = ${data[i]["lower_bound"]}`
-  //     // );
-  //   }
-
-  //   // Simulation loop
-  //   let capital = initialCapital / 4.0;
-  //   let stocks = 0;
-  //   const fees = 0.001;
-  //   const positions = [];
-  //   const successHistory = [];
-  //   const failureHistory = [];
-  //   let stopLoss = 0.0;
-
-  //   console.log(`Initial capital:`, capital);
-
-  //   for (let i = 21; i < data.length; i++) {
-  //     // Check for open position
-  //     // console.log(data[i]["Close_1_shift"], data[i]["lower_bound"]);
-  //     console.log(data);
-
-  //     if (
-  //       data[i]["Close_1_shift"] > data[i]["upper_bound"] &&
-  //       positions.length === 0
-  //     ) {
-  //       console.log(data[i]["Close_1_shift"], data[i]["upper_bound"]);
-
-  //       const price = (data[i]["Price"] + data[i]["Open"]) / 2.0;
-  //       console.log(price);
-  //       const purchaseCapAmount = capital * (1.0 - fees);
-  //       stocks += Math.round(purchaseCapAmount / price, 4);
-  //       capital = 0.0;
-  //       stopLoss = price - 2.0 * data[i]["N"];
-  //       positions.push({ time: i, date: data[i]["Date"], price });
-
-  //       console.log(
-  //         "Open position at",
-  //         price,
-  //         "buy",
-  //         stocks,
-  //         "date",
-  //         data[i]["Date"],
-  //         "Stop loss at",
-  //         stopLoss
-  //       );
-  //     }
-
-  //     // Check to close position
-  //     else if (
-  //       positions.length > 0 &&
-  //       (data[i]["Close_1_shift"] < data[i]["lower_bound"] ||
-  //         data[i]["Close_1_shift"] < stopLoss ||
-  //         i === data.length - 1)
-  //     ) {
-  //       const price = (data[i]["Price"] + data[i]["Open"]) / 2.0;
-  //       capital = stocks * price * (1 - fees);
-  //       stopLoss = 0.0;
-  //       stocks = 0.0;
-
-  //       console.log(
-  //         "Close position at",
-  //         price,
-  //         "capital",
-  //         capital,
-  //         "date",
-  //         data[i]["Date"]
-  //       );
-
-  //       if (positions[positions.length - 1].price < price) {
-  //         for (const p of positions) {
-  //           successHistory.push({
-  //             date: [p.date, data[i]["Date"]],
-  //             price: [p.price, price],
-  //           });
-  //         }
-  //       } else {
-  //         for (const p of positions) {
-  //           failureHistory.push({
-  //             date: [p.date, data[i]["Date"]],
-  //             price: [p.price, price],
-  //           });
-  //         }
-  //       }
-  //       positions.length = 0;
-  //     }
-  //   }
-
-  //   // Calculate and print success rate
-  //   const totalPositions = successHistory.length + failureHistory.length;
-  //   const successRate =
-  //     totalPositions > 0 ? successHistory.length / totalPositions : 0;
-
-  //   console.log("-".repeat(50));
-  //   console.log(`Success rate:`, successRate);
-  //   console.log(`Capital at the end:`, capital);
-  //   console.log("-".repeat(50));
-  // };
-
   const applyTurtleTrading = () => {
-    const csv_filename = "csv";
     const initial_capital = 100000;
 
     // Process data similar to Python code
@@ -341,7 +131,7 @@ const Turtle = () => {
     let stop_loss = 0; // Declare stop_loss outside the loop
 
     console.log("-".repeat(50));
-    console.log(`Initial capital for ${csv_filename}:`, capital);
+    console.log(`Initial capital:`, capital);
     console.log("-".repeat(50));
 
     for (let i = 21; i < data.length; i++) {
@@ -403,21 +193,6 @@ const Turtle = () => {
 
         positions.length = 0;
       }
-      // else
-      // {
-      //     console.log(
-      //         "No conditions met on date",
-      //         data[i].Date,
-      //         "lower_bound",
-      //         df_1d["lower_bound"][i],
-      //         "upper_bound",
-      //         df_1d["upper_bound"][i],
-      //         "Close_1_shift",
-      //         df_1d["Close_1_shift"][i],
-      //         "stopLoss",
-      //         stop_loss
-      //     );
-      // }
     }
 
     const success_rate =
@@ -426,14 +201,11 @@ const Turtle = () => {
       100;
 
     console.log("-".repeat(50));
-    console.log(`Success rate for ${csv_filename}:`, success_rate);
-    console.log(
-      `Capital at the end for ${csv_filename}:`,
-      Math.round(capital, 2)
-    );
+    console.log(`Success rate:`, success_rate);
+    console.log(`Capital at the end:`, Math.round(capital, 2));
     console.log("-".repeat(50));
 
-    console.log(`Summary of % change in positions for ${csv_filename}:`);
+    console.log(`Summary of % change in positions:`);
     for (const h of [failure_history, success_history]) {
       for (const position of h) {
         const percent_change = parseFloat(
@@ -532,7 +304,6 @@ const Turtle = () => {
     console.log("-".repeat(50));
   };
 
-  // for mean reversion
   function calculateZScore(arr) {
     const mean = arr.reduce((sum, value) => sum + value, 0) / arr.length;
     const variance =
@@ -723,7 +494,6 @@ const Turtle = () => {
     console.log("-".repeat(50));
   };
 
-  // swing trading
   // Function to calculate Exponential Moving Average (EMA)
   function calculateEMA(prices, period) {
     const multiplier = 2 / (period + 1);
@@ -847,53 +617,14 @@ const Turtle = () => {
   };
 
   return (
-    <div>
+    <div className="grid md:grid-cols-2">
       {/* input part started  */}
-      <div className="grid grid-cols-1 gap-8 mt-6 mx-4">
-        <p className="text-xl font-bold">Choose a trading strategy:</p>
-        <form className="grid grid-cols-4">
-          <label className="slabel">
-            <input
-              type="radio"
-              value="Turtle Trading Strategy"
-              checked={selectedOption === "Turtle Trading Strategy"}
-              onChange={handleOptionChange}
-            />
-            Turtle Trading Strategy
-          </label>
-          <label className="slabel">
-            <input
-              type="radio"
-              value="Mean Reversion Trading Strategy"
-              checked={selectedOption === "Mean Reversion Trading Strategy"}
-              onChange={handleOptionChange}
-            />
-            Mean Reversion Trading Strategy
-          </label>
-          <label className="slabel">
-            <input
-              type="radio"
-              value="Pullback Trading Strategy"
-              checked={selectedOption === "Pullback Trading Strategy"}
-              onChange={handleOptionChange}
-            />
-            Pullback Trading Strategy
-          </label>
-          <label className="slabel">
-            <input
-              type="radio"
-              value="Swing Trading Strategy"
-              checked={selectedOption === "Swing Trading Strategy"}
-              onChange={handleOptionChange}
-            />
-            Swing Trading Strategy
-          </label>
-        </form>
+      <div className="grid container w-3/5 grid-cols-1 gap-8 mt-6 mx-4">
         <div>
-          <label>
-            <span className=" text-xl font-bold">Initial Investment:</span>
+          <label className="flex flex-col justify-start">
+            <span className=" text-xl font-bold mb-2">Initial Investment:</span>
             <input
-              className="text-black ml-2 px-2 py-1 rounded outline-none"
+              className="text-black px-2 py-1 rounded outline-none"
               type="text"
               value={value}
               onChange={handleInputChange}
@@ -901,58 +632,53 @@ const Turtle = () => {
             />
           </label>
         </div>
-        <p>
-          <span className=" text-xl font-bold">You selected: </span>
-          <span className="text-2xl font-bold text-green-700 bg-white px-4 py-1 rounded-md">
-            {" "}
-            {`${selectedOption || "None"}`}
-          </span>
-        </p>
-        <p>
-          <span className=" text-xl font-bold">Your Initial Investment: </span>
-          <span className="text-2xl font-bold text-green-700 bg-white px-4 py-1 rounded-md">{`$${
-            value || 0
-          }`}</span>
-        </p>
-      </div>
-      {/* input part ended */}
-      <div className="container">
-        <label
-          htmlFor="csvInput"
-          className="labelForCsv cursor-pointer"
-          style={{ display: "block" }}
-        >
-          {file ? `${file.name}` : "Choose CSV File"}
-        </label>
-
-        <input
-          onChange={handleFileChange}
-          id="csvInput"
-          name="file"
-          type="file"
-        />
         <div>
-          <button onClick={handleParse}>Parse</button>
-          <button onClick={applyTurtleTrading}>Turtle</button>
-          <button onClick={applyPullbackTrading}>Pullback</button>
-          <button onClick={applyMeanReversionTrading}>MeanReversion</button>
-          <button onClick={applySwingTradingStrategy}>Swing</button>
+          <label
+            htmlFor="csvInput"
+            className="labelForCsv cursor-pointer"
+            // style={{ display: "block" }}
+          >
+            {file ? `${file.name}` : "Choose CSV File"}
+          </label>
+
+          <input
+            onChange={handleFileChange}
+            id="csvInput"
+            name="file"
+            type="file"
+          />
         </div>
-        {/* <div style={{ marginTop: "3rem" }}>
-          {error
-            ? error
-            : data.map((row, rowIndex) => (
-                <div key={rowIndex} className="item">
-                  {row.map((column, columnIndex) => (
-                    <span key={columnIndex}>
-                      {Object.keys(column)[0]}: {Object.values(column)[0]}
-                      <br />
-                    </span>
-                  ))}
-                  <hr />
-                </div>
-              ))}
-        </div> */}
+        <button onClick={handleParse}>
+          <AwesomeButton type="primary" style={{ width: "100%" }}>
+            Parse Your Data
+          </AwesomeButton>
+        </button>
+      </div>
+
+      {/* input part ended */}
+      <div className="container lg:w-4/5">
+        <div className="grid grid-cols-1 gap-6">
+          <button onClick={applyTurtleTrading} className="w-full">
+            <AwesomeButton type="primary" style={{ width: "100%" }}>
+              Apply Turtle Trading Strategy
+            </AwesomeButton>
+          </button>
+          <button onClick={applyPullbackTrading}>
+            <AwesomeButton type="primary" style={{ width: "100%" }}>
+              Apply Pullback Trading Strategy
+            </AwesomeButton>
+          </button>
+          <button onClick={applyMeanReversionTrading}>
+            <AwesomeButton type="primary" style={{ width: "100%" }}>
+              Apply Mean Reversion Trading Strategy
+            </AwesomeButton>
+          </button>
+          <button onClick={applySwingTradingStrategy}>
+            <AwesomeButton type="primary" style={{ width: "100%" }}>
+              Apply Swing Trading Strategy
+            </AwesomeButton>
+          </button>
+        </div>
       </div>
     </div>
   );
