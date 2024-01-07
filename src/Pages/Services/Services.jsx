@@ -5,7 +5,7 @@ const Services = () => {
   return (
     <div className="text-white mt-8">
       <SectionTitle
-        heading={"Make Smarter, Data-Driven Investment Decisions"}
+        heading={"Unlock Success with Our Proven Trading Strategies"}
       ></SectionTitle>
       <Turtle></Turtle>
     </div>

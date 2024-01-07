@@ -4,6 +4,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Provider/AuthProvider";
 import Swal from "sweetalert2";
 import "animate.css";
+import { AwesomeButton } from "react-awesome-button";
 const SignUp = () => {
   const {
     register,
@@ -105,11 +106,12 @@ const SignUp = () => {
                 </label>
               </div>
               <div className="form-control mt-6">
-                <input
-                  className="btn btn-primary"
-                  type="submit"
-                  value="Sign Up"
-                />
+                <AwesomeButton type="primary" style={{ width: "100%" }}>
+                  <input
+                    type="submit"
+                    value="Sign Up"
+                  />
+                </AwesomeButton>
               </div>
             </form>
             <p className="pl-8 pb-4">

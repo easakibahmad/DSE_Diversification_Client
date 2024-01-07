@@ -1,6 +1,6 @@
 import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "../Shared/Navbar";
-import Footer from "../Shared/Footer";
+// import Footer from "../Shared/Footer";
 
 const Main = () => {
   const location = useLocation();
@@ -10,7 +10,7 @@ const Main = () => {
     <div>
       {checkCurrentLocation || <Navbar></Navbar>}
       <Outlet></Outlet>
-      {checkCurrentLocation || <Footer></Footer>}
+      {/* {checkCurrentLocation || <Footer></Footer>} */}
     </div>
   );
 };

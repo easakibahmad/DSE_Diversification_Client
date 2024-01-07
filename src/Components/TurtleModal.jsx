@@ -4,7 +4,7 @@ const TurtleModal = ( { initialCapital, endCapital, fileName} ) =>
   return (
     <>
       <dialog id="turtle_modal" className="modal   text-white">
-        <div className="modal-box bg-blue-950	">
+        <div className="modal-box bg-gradient-to-r 	to-emerald-600	from-amber-700">
           <h2 className="text-center font-bold pb-1 text-xl">
             Turtle Trading Strategy Results ({fileName})
           </h2>

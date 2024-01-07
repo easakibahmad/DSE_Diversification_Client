@@ -3,6 +3,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Provider/AuthProvider";
 import Swal from "sweetalert2";
 import "animate.css";
+import { AwesomeButton } from "react-awesome-button";
 
 const Login = () => {
   const { signIn } = useContext(AuthContext);
@@ -102,11 +103,9 @@ const Login = () => {
                 </label>
               </div>
               <div className="form-control mt-6">
-                <input
-                  className="btn btn-primary"
-                  type="submit"
-                  value="Login"
-                />
+                <AwesomeButton type="primary" style={{ width: "100%" }}>
+                  <input type="submit" value="Log In" />
+                </AwesomeButton>
               </div>
             </form>
             <p className="pl-8 pb-4">

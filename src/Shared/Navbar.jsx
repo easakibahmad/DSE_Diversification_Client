@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import { AuthContext } from "../Provider/AuthProvider";
 import Swal from "sweetalert2";
 import "animate.css";
+import { AwesomeButton } from "react-awesome-button";
 
 const Navbar = () => {
-  const { user, logOut } = useContext(AuthContext);
+  const { user, logOut } = useContext( AuthContext );
+
 
   const handleLogOut = () => {
     logOut()
@@ -31,7 +33,7 @@ const Navbar = () => {
       .catch((err) => console.log(err));
   };
   return (
-    <div className="navbar z-10 bg-opacity-30 text-white shadow-2xl">
+    <div className="navbar z-10 bg-opacity-30 pt-6 px-12 text-white shadow-2xl">
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -68,7 +70,10 @@ const Navbar = () => {
             </li>
           </ul>
         </div>
-        <Link to="/" className="btn btn-ghost text-xl">DSE Diversification</Link>
+        <Link to="/" className="btn btn-ghost text-xl">
+          <span className="font-bold text-yellow-500">DSE</span>{" "}
+          <span className="">Diversification</span>
+        </Link>
       </div>
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
@@ -89,14 +94,18 @@ const Navbar = () => {
       <div className="navbar-end">
         {user ? (
           <>
-            <Link onClick={handleLogOut} className="btn">
-              Logout
+            <Link onClick={handleLogOut}>
+              <AwesomeButton type="secondary" style={{ width: "100%" }}>
+                Logout
+              </AwesomeButton>
             </Link>
           </>
         ) : (
           <>
-            <Link to="/login" className="btn">
-              Login
+            <Link to="/login">
+              <AwesomeButton type="secondary" style={{ width: "100%" }}>
+                Login
+              </AwesomeButton>
             </Link>
           </>
         )}
