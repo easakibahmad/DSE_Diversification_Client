@@ -33,5 +33,7 @@
 7. install plotlyjs
 8. npm install papaparse
 9. npm install react-spring
+10. npm install react-hot-toast
+
 
 

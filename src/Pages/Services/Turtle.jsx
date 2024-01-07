@@ -5,6 +5,7 @@ import "../../Styles/ServiceSelectionInput.css";
 import { AwesomeButton } from "react-awesome-button";
 import "react-awesome-button/dist/styles.css";
 import TurtleModal from "../../Components/TurtleModal";
+import toast, { Toaster } from "react-hot-toast";
 
 const allowedExtensions = ["csv"];
 
@@ -75,6 +76,7 @@ const Turtle = () => {
       });
 
       setData(transformedData);
+      toast.success("Data parsed successfully");
     };
     reader.readAsText(file);
   };
@@ -659,7 +661,7 @@ const Turtle = () => {
             style={{ width: "100%" }}
             disabled={!file}
           >
-            Parse Your Data
+            {data.length > 0 ? "Parsed already" : "Parse Your Data"}
           </AwesomeButton>
         </button>
       </div>
@@ -717,6 +719,7 @@ const Turtle = () => {
           </button>
         </div>
       </div>
+      <Toaster />
     </div>
   );
 };
