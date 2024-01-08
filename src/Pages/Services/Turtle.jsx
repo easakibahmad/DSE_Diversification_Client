@@ -146,11 +146,11 @@ const Turtle = () => {
         df_1d["Close_1_shift"][i] > df_1d["upper_bound"][i] &&
         positions.length === 0
       ) {
-        const price = (data[i].Price + data[i].Open) / 2.0;
+        const price = Math.round((data[i].Price + data[i].Open) / 2.0);
         const purchase_cap_amount = capital * (1.0 - fees);
         stocks += parseFloat((purchase_cap_amount / price).toFixed(4));
         capital = 0.0;
-        stop_loss = price - 2.0 * df_1d["N"][i];
+        stop_loss = Math.round(price - 2.0 * df_1d["N"][i]);
         positions.push({ time: i, date: data[i].Date, price });
 
         const newPositionLog = `Open position at ${price} buy ${stocks} date ${data[i].Date} Stop loss at ${stop_loss}`;
@@ -172,8 +172,8 @@ const Turtle = () => {
           df_1d["Close_1_shift"][i] < stop_loss ||
           i === data.length - 1)
       ) {
-        const price = (data[i].Price + data[i].Open) / 2.0;
-        capital = stocks * price * (1 - fees);
+        const price = Math.round((data[i].Price + data[i].Open) / 2.0);
+        capital = Math.round(stocks * price * (1 - fees));
         stocks = 0.0;
 
         const newPositionLog = `Close position at ${price} capital ${capital} date ${data[i].Date}`;
