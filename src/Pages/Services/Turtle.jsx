@@ -13,6 +13,7 @@ const Turtle = () => {
   const [value, setValue] = useState("");
   const [iCapital, setICapital] = useState(0);
   const [eCapital, setECapital] = useState(0);
+  const [turtlePositionLogs, setTurtlePositionLogs] = useState([]);
 
   const handleInputChange = (event) => {
     const inputValue = event.target.value;
@@ -152,6 +153,9 @@ const Turtle = () => {
         stop_loss = price - 2.0 * df_1d["N"][i];
         positions.push({ time: i, date: data[i].Date, price });
 
+        const newPositionLog = `Open position at ${price} buy ${stocks} date ${data[i].Date} Stop loss at ${stop_loss}`;
+        setTurtlePositionLogs((prevLogs) => [...prevLogs, newPositionLog]);
+
         console.log(
           "Open position at",
           price,
@@ -171,6 +175,9 @@ const Turtle = () => {
         const price = (data[i].Price + data[i].Open) / 2.0;
         capital = stocks * price * (1 - fees);
         stocks = 0.0;
+
+        const newPositionLog = `Close position at ${price} capital ${capital} date ${data[i].Date}`;
+        setTurtlePositionLogs((prevLogs) => [...prevLogs, newPositionLog]);
 
         console.log(
           "Close position at",
@@ -211,6 +218,7 @@ const Turtle = () => {
     console.log(`Capital at the end:`, Math.round(capital, 2));
     setECapital(Math.round(capital, 2));
     console.log("-".repeat(50));
+    // console.log(turtlePositionLogs)
 
     console.log(`Summary of % change in positions:`);
     for (const h of [failure_history, success_history]) {
@@ -671,6 +679,7 @@ const Turtle = () => {
         <TurtleModal
           initialCapital={iCapital}
           endCapital={eCapital}
+          turtlePositionLogs={turtlePositionLogs}
           fileName={file ? file.name : ""}
         ></TurtleModal>
         <div className="grid grid-cols-1 gap-6">
