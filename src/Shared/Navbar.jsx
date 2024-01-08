@@ -6,8 +6,7 @@ import "animate.css";
 import { AwesomeButton } from "react-awesome-button";
 
 const Navbar = () => {
-  const { user, logOut } = useContext( AuthContext );
-
+  const { user, logOut } = useContext(AuthContext);
 
   const handleLogOut = () => {
     logOut()
@@ -78,16 +77,24 @@ const Navbar = () => {
       <div className="navbar-center hidden lg:flex">
         <ul className="menu menu-horizontal px-1">
           <li>
-            <Link to="/services">Our Services</Link>
+            <Link to="/services">
+              <AwesomeButton type="secondary">Our Services</AwesomeButton>
+            </Link>
           </li>
           <li>
-            <a>Investing Basics</a>
+            <Link>
+              <AwesomeButton type="secondary">Investing Basics </AwesomeButton>
+            </Link>
           </li>
           <li>
-            <a>DSE Stocks</a>
+            <Link>
+              <AwesomeButton type="secondary">DSE Stocks</AwesomeButton>
+            </Link>
           </li>
           <li>
-            <a>About Us</a>
+            <Link>
+              <AwesomeButton type="secondary">About Us</AwesomeButton>
+            </Link>
           </li>
         </ul>
       </div>
