@@ -10,6 +10,8 @@ import toast, { Toaster } from "react-hot-toast";
 const allowedExtensions = ["csv"];
 
 const Turtle = () => {
+  const [initialCapital, setInitialCapital] = useState(100000); // Default initial capital
+
   const [value, setValue] = useState("");
   const [iCapital, setICapital] = useState(0);
   const [eCapital, setECapital] = useState(0);
@@ -19,6 +21,7 @@ const Turtle = () => {
     const inputValue = event.target.value;
     if (/^\d*\.?\d*$/.test(inputValue)) {
       setValue(inputValue);
+      setInitialCapital(parseFloat(inputValue));
     }
   };
 
@@ -83,7 +86,7 @@ const Turtle = () => {
   };
 
   const applyTurtleTrading = () => {
-    const initial_capital = 100000;
+    // const initial_capital = 100000;
     // Process data similar to Python code
     const df_1d = {
       Close_1_shift: data.map((entry) => entry.Price),
@@ -127,7 +130,7 @@ const Turtle = () => {
       );
     }
 
-    let capital = initial_capital / 4.0;
+    let capital = initialCapital / 4.0;
     let stocks = 0;
     let fees = 0.001;
     let positions = [];
@@ -235,7 +238,6 @@ const Turtle = () => {
   };
 
   const applyPullbackTrading = () => {
-    const initialCapital = 100000;
     const pullbackWindow = 10;
     const entryThreshold = 0.02;
     const exitThreshold = 0.01;
@@ -441,7 +443,7 @@ const Turtle = () => {
     const rsiValues = calculateRSI(prices);
     const stochasticValues = calculateStochastic(data);
 
-    let capital = 100000;
+    let capital = initialCapital;
     let stocks = 0;
     const positions = [];
     const buyPointsX = [];
@@ -523,7 +525,6 @@ const Turtle = () => {
   }
 
   const applySwingTradingStrategy = () => {
-    const initialCapital = 100000;
     const shortEmaPeriod = 9;
     const midEmaPeriod = 13;
     const longEmaPeriod = 50;
