@@ -6,6 +6,7 @@ import { AwesomeButton } from "react-awesome-button";
 import "react-awesome-button/dist/styles.css";
 import TurtleModal from "../../Components/TurtleModal";
 import toast, { Toaster } from "react-hot-toast";
+import PullbackModal from "../../Components/PullbackModal";
 
 const allowedExtensions = ["csv"];
 
@@ -16,6 +17,7 @@ const Turtle = () => {
   const [iCapital, setICapital] = useState(0);
   const [eCapital, setECapital] = useState(0);
   const [turtlePositionLogs, setTurtlePositionLogs] = useState([]);
+  const [pullbackPositionLogs, setPullbackPositionLogs] = useState([]);
 
   const handleInputChange = (event) => {
     const inputValue = event.target.value;
@@ -244,6 +246,7 @@ const Turtle = () => {
 
     // Initialize variables
     let capital = initialCapital;
+    setICapital(capital);
     let stocks = 0;
     const fees = 0.001;
     const positions = [];
@@ -276,12 +279,14 @@ const Turtle = () => {
         const price = currentPrice;
         const purchaseCapAmount = capital * (1.0 - fees);
         stocks += Math.floor(purchaseCapAmount / price);
-        capital -= stocks * price;
+        capital -= Math.round(stocks * price);
         positions.push({ time: i, date: data[i].Date, price });
         buyPointsX.push(data[i].Date);
         buyPointsY.push(price);
         inPosition = true; // Set flag to indicate in a position
         entryPrice = price; // Set entry price
+        const newPositionLog = `Enter pullback position at ${price}, buy ${stocks}, date ${data[i].Date}`;
+        setPullbackPositionLogs((prevLogs) => [...prevLogs, newPositionLog]);
         console.log(
           "Enter pullback position at",
           price,
@@ -295,10 +300,12 @@ const Turtle = () => {
       // Check for exiting a pullback position
       else if (priceChange > exitThreshold && inPosition) {
         const price = currentPrice;
-        capital += stocks * price * (1 - fees);
+        capital += Math.round(stocks * price * (1 - fees));
         stocks = 0;
         sellPointsX.push(data[i].Date);
         sellPointsY.push(price);
+        const newPositionLog = `Exit pullback position at ${price}, capital ${capital}, date ${data[i].Date}`;
+        setPullbackPositionLogs((prevLogs) => [...prevLogs, newPositionLog]);
         console.log(
           "Exit pullback position at",
           price,
@@ -313,8 +320,10 @@ const Turtle = () => {
     }
 
     // Calculate the final capital
-    const finalCapital =
-      capital + Math.abs(stocks) * data[data.length - 1].Price;
+    const finalCapital = Math.round(
+      capital + Math.abs(stocks) * data[data.length - 1].Price
+    );
+    setECapital(finalCapital);
 
     console.log("-".repeat(50));
     console.log(`Final capital: ${Math.round(finalCapital, 2)}`);
@@ -683,6 +692,12 @@ const Turtle = () => {
           turtlePositionLogs={turtlePositionLogs}
           fileName={file ? file.name : ""}
         ></TurtleModal>
+        <PullbackModal
+          initialCapital={iCapital}
+          endCapital={eCapital}
+          pullbackPositionLogs={pullbackPositionLogs}
+          fileName={file ? file.name : ""}
+        ></PullbackModal>
         <div className="grid grid-cols-1 gap-6">
           <button
             disabled={!file}
@@ -700,7 +715,7 @@ const Turtle = () => {
               Apply Turtle Trading Strategy
             </AwesomeButton>
           </button>
-          <button disabled={!file} onClick={applyPullbackTrading}>
+          <button disabled={ !file } onClick={ () => { applyPullbackTrading(); document.getElementById("pullback_modal").showModal();} }>
             <AwesomeButton
               type="primary"
               style={{ width: "100%" }}
