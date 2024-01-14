@@ -16,6 +16,11 @@ const Turtle = () => {
   const [initialCapital, setInitialCapital] = useState(100000); // Default initial capital
 
   const [value, setValue] = useState("");
+  const [investmentType, setInvestmentType] = useState("Engineering");
+  const [data, setData] = useState([]);
+  const [error, setError] = useState("");
+  const [file, setFile] = useState("");
+
   const [iCapital, setICapital] = useState(0);
   const [eCapital, setECapital] = useState(0);
   const [turtlePositionLogs, setTurtlePositionLogs] = useState([]);
@@ -33,9 +38,11 @@ const Turtle = () => {
     }
   };
 
-  const [data, setData] = useState([]);
-  const [error, setError] = useState("");
-  const [file, setFile] = useState("");
+  const handleDropDownValueChange = (event) => {
+    const selectedValue = event.target.value;
+    setInvestmentType(selectedValue);
+    console.log(selectedValue);
+  };
 
   // take csv file as an input
   const handleFileChange = (e) => {
@@ -138,7 +145,7 @@ const Turtle = () => {
       );
     }
 
-    let capital = initialCapital / 4.0;
+    let capital = initialCapital;
     let stocks = 0;
     let fees = 0.001;
     let positions = [];
@@ -514,7 +521,9 @@ const Turtle = () => {
         sellPointsX.push(data[i].Date);
         sellPointsY.push(price);
 
-        const newPositionLog = `Exit position at ${price} buy ${Math.round(capital)} date ${data[i].Date}`;
+        const newPositionLog = `Exit position at ${price} buy ${Math.round(
+          capital
+        )} date ${data[i].Date}`;
         setMeanReversionPositionLogs((prevLogs) => [
           ...prevLogs,
           newPositionLog,
@@ -605,7 +614,7 @@ const Turtle = () => {
       if (shortEma > midEma && midEma > data[i].Long_EMA && !inPosition) {
         const price = data[i].Price;
         const purchaseCapAmount = capital * (1.0 - fees);
-        stocks +=Math.round( Math.floor(purchaseCapAmount / price));
+        stocks += Math.round(Math.floor(purchaseCapAmount / price));
         capital -= Math.round(stocks * price);
         positions.push({ time: i, date: data[i].Date, price });
         buyPointsX.push(data[i].Date);
@@ -647,7 +656,9 @@ const Turtle = () => {
         sellPointsX.push(data[i].Date);
         sellPointsY.push(price);
 
-        const newPositionLog = `Exit position at ${price}, capital ${Math.round(capital)}, date ${data[i].Date}, stopLoss ${Math.round(stopLoss)}`;
+        const newPositionLog = `Exit position at ${price}, capital ${Math.round(
+          capital
+        )}, date ${data[i].Date}, stopLoss ${Math.round(stopLoss)}`;
         setSwingPositionLogs((prevLogs) => [...prevLogs, newPositionLog]);
         console.log(
           `Exit position at ${price}, capital ${capital}, date ${data[i].Date}, stopLoss ${stopLoss}`
@@ -671,9 +682,42 @@ const Turtle = () => {
   };
 
   return (
-    <div className="grid md:grid-cols-2">
+    <div className="grid md:grid-cols-2 px-4">
       {/* input part started  */}
-      <div className="grid container w-3/5 grid-cols-1 gap-8 mt-6 mx-4">
+      <div className="grid container md:w-3/4 grid-cols-1 gap-8 mt-6 mx-4">
+        {/* dropdown input  */}
+        <div>
+          <label className="flex flex-col justify-start">
+            <span className="text-xl font-bold mb-2">Company Type:</span>
+            <select
+              className="text-black px-2  rounded outline-none py-1"
+              value={investmentType}
+              onChange={handleDropDownValueChange}
+            >
+              <option value="Engineering">Engineering</option>
+              <option value="Food">Food</option>
+              <option value="Cement">Cement</option>
+              <option value="BankAndFinance">Bank & Finance</option>
+              <option value="Service">Service</option>
+              <option value="Garments">Garments</option>
+              {/* Add more options as needed */}
+            </select>
+          </label>
+        </div>
+        {/* dropdown ended  */}
+        {/* CSV File dropdown */}
+        <div>
+          <label className="flex flex-col justify-start">
+            <span className="text-xl font-bold mb-2">Choose CSV File:</span>
+            <select className="text-black px-2 py-1 rounded outline-none">
+              <option value="file1.csv">File 1</option>
+              <option value="file2.csv">File 2</option>
+              <option value="file3.csv">File 3</option>
+              {/* Add more options as needed */}
+            </select>
+          </label>
+        </div>
+        {/* csv file dropdown ended  */}
         <div>
           <label className="flex flex-col justify-start">
             <span className=" text-xl font-bold mb-2">Initial Investment:</span>
@@ -708,7 +752,7 @@ const Turtle = () => {
             style={{ width: "100%" }}
             disabled={!file}
           >
-            {data.length > 0 ? "Parsed already" : "Parse Your Data"}
+            Parse Your Data
           </AwesomeButton>
         </button>
       </div>
@@ -807,5 +851,4 @@ const Turtle = () => {
     </div>
   );
 };
-
 export default Turtle;
