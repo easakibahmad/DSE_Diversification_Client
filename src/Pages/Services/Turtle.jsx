@@ -682,7 +682,7 @@ const Turtle = () => {
   };
 
   return (
-    <div className="grid md:grid-cols-2 px-4">
+    <div className="grid md:grid-cols-2 px-4 pb-12">
       {/* input part started  */}
       <div className="grid container md:w-3/4 grid-cols-1 gap-8 mt-6 mx-4">
         {/* dropdown input  */}
@@ -783,7 +783,7 @@ const Turtle = () => {
           swingPositionLogs={swingPositionLogs}
           fileName={file ? file.name : ""}
         ></SwingModal>
-        <div className="grid grid-cols-1 gap-6">
+        <div className="grid grid-cols-1 my-auto gap-6">
           <button
             disabled={!file}
             onClick={() => {
