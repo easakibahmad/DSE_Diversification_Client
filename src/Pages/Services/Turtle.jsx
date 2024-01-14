@@ -7,6 +7,8 @@ import "react-awesome-button/dist/styles.css";
 import TurtleModal from "../../Components/TurtleModal";
 import toast, { Toaster } from "react-hot-toast";
 import PullbackModal from "../../Components/PullbackModal";
+import MeanReversionModal from "../../Components/MeanReversionModal";
+import SwingModal from "../../Components/SwingModal";
 
 const allowedExtensions = ["csv"];
 
@@ -18,6 +20,10 @@ const Turtle = () => {
   const [eCapital, setECapital] = useState(0);
   const [turtlePositionLogs, setTurtlePositionLogs] = useState([]);
   const [pullbackPositionLogs, setPullbackPositionLogs] = useState([]);
+  const [meanReversionPositionLogs, setMeanReversionPositionLogs] = useState(
+    []
+  );
+  const [swingPositionLogs, setSwingPositionLogs] = useState([]);
 
   const handleInputChange = (event) => {
     const inputValue = event.target.value;
@@ -453,6 +459,7 @@ const Turtle = () => {
     const stochasticValues = calculateStochastic(data);
 
     let capital = initialCapital;
+    setICapital(capital);
     let stocks = 0;
     const positions = [];
     const buyPointsX = [];
@@ -481,6 +488,12 @@ const Turtle = () => {
         buyPointsX.push(data[i].Date);
         buyPointsY.push(price);
         inPosition = true;
+
+        const newPositionLog = `Enter position at ${price} buy ${stocks} date ${data[i].Date}`;
+        setMeanReversionPositionLogs((prevLogs) => [
+          ...prevLogs,
+          newPositionLog,
+        ]);
         console.log(
           "Enter position at",
           price,
@@ -496,10 +509,16 @@ const Turtle = () => {
         inPosition
       ) {
         const price = data[i].Price;
-        capital += stocks * price * (1 - fees);
+        capital += Math.round(stocks * price * (1 - fees));
         stocks = 0;
         sellPointsX.push(data[i].Date);
         sellPointsY.push(price);
+
+        const newPositionLog = `Exit position at ${price} buy ${Math.round(capital)} date ${data[i].Date}`;
+        setMeanReversionPositionLogs((prevLogs) => [
+          ...prevLogs,
+          newPositionLog,
+        ]);
         console.log(
           "Exit position at",
           price,
@@ -517,6 +536,7 @@ const Turtle = () => {
 
     console.log("-".repeat(50));
     console.log(`Final capital: ${Math.round(finalCapital, 2)}`);
+    setECapital(Math.round(finalCapital, 2));
     console.log("-".repeat(50));
   };
 
@@ -539,6 +559,7 @@ const Turtle = () => {
     const longEmaPeriod = 50;
 
     let capital = initialCapital; // Initial capital
+    setICapital(capital);
     let stocks = 0; // The initial amount of stocks
     const fees = 0.001; // Fees as 0.1%
     const positions = []; // List to keep current positions
@@ -584,14 +605,16 @@ const Turtle = () => {
       if (shortEma > midEma && midEma > data[i].Long_EMA && !inPosition) {
         const price = data[i].Price;
         const purchaseCapAmount = capital * (1.0 - fees);
-        stocks += Math.floor(purchaseCapAmount / price);
-        capital -= stocks * price;
+        stocks +=Math.round( Math.floor(purchaseCapAmount / price));
+        capital -= Math.round(stocks * price);
         positions.push({ time: i, date: data[i].Date, price });
         buyPointsX.push(data[i].Date);
         buyPointsY.push(price);
         inPosition = true; // Set flag to indicate in a position
         entryPrice = price; // Set entry price
         stopLoss = entryPrice - 0.05 * entryPrice; // Set stop loss
+        const newPositionLog = `Long Enter position at ${price} buy ${stocks} date ${data[i].Date}`;
+        setSwingPositionLogs((prevLogs) => [...prevLogs, newPositionLog]);
         console.log(
           `Long Enter position at ${price}, buy ${stocks}, date ${data[i].Date}`
         );
@@ -609,6 +632,8 @@ const Turtle = () => {
         inPosition = true; // Set flag to indicate in a position
         entryPrice = price; // Set entry price
         stopLoss = entryPrice + 0.05 * entryPrice; // Set stop loss
+        const newPositionLog = `Short Enter position at ${price} buy ${stocks} date ${data[i].Date}`;
+        setSwingPositionLogs((prevLogs) => [...prevLogs, newPositionLog]);
         console.log(
           `Short Enter position at ${price}, short ${stocks}, date ${data[i].Date}`
         );
@@ -621,6 +646,9 @@ const Turtle = () => {
         stocks = 0;
         sellPointsX.push(data[i].Date);
         sellPointsY.push(price);
+
+        const newPositionLog = `Exit position at ${price}, capital ${Math.round(capital)}, date ${data[i].Date}, stopLoss ${Math.round(stopLoss)}`;
+        setSwingPositionLogs((prevLogs) => [...prevLogs, newPositionLog]);
         console.log(
           `Exit position at ${price}, capital ${capital}, date ${data[i].Date}, stopLoss ${stopLoss}`
         );
@@ -635,6 +663,7 @@ const Turtle = () => {
     // Calculate the final capital
     const finalCapital =
       capital + Math.abs(stocks) * data[data.length - 1].Price;
+    setECapital(Math.round(finalCapital, 2));
 
     console.log("-".repeat(50));
     console.log(`Capital at the end for : ${Math.round(finalCapital, 2)}`);
@@ -698,6 +727,18 @@ const Turtle = () => {
           pullbackPositionLogs={pullbackPositionLogs}
           fileName={file ? file.name : ""}
         ></PullbackModal>
+        <MeanReversionModal
+          initialCapital={iCapital}
+          endCapital={eCapital}
+          meanReversionPositionLogs={meanReversionPositionLogs}
+          fileName={file ? file.name : ""}
+        ></MeanReversionModal>
+        <SwingModal
+          initialCapital={iCapital}
+          endCapital={eCapital}
+          swingPositionLogs={swingPositionLogs}
+          fileName={file ? file.name : ""}
+        ></SwingModal>
         <div className="grid grid-cols-1 gap-6">
           <button
             disabled={!file}
@@ -715,7 +756,13 @@ const Turtle = () => {
               Apply Turtle Trading Strategy
             </AwesomeButton>
           </button>
-          <button disabled={ !file } onClick={ () => { applyPullbackTrading(); document.getElementById("pullback_modal").showModal();} }>
+          <button
+            disabled={!file}
+            onClick={() => {
+              applyPullbackTrading();
+              document.getElementById("pullback_modal").showModal();
+            }}
+          >
             <AwesomeButton
               type="primary"
               style={{ width: "100%" }}
@@ -724,7 +771,13 @@ const Turtle = () => {
               Apply Pullback Trading Strategy
             </AwesomeButton>
           </button>
-          <button disabled={!file} onClick={applyMeanReversionTrading}>
+          <button
+            disabled={!file}
+            onClick={() => {
+              applyMeanReversionTrading();
+              document.getElementById("mean_reversion_modal").showModal();
+            }}
+          >
             <AwesomeButton
               type="primary"
               style={{ width: "100%" }}
@@ -733,7 +786,13 @@ const Turtle = () => {
               Apply Mean Reversion Trading Strategy
             </AwesomeButton>
           </button>
-          <button disabled={!file} onClick={applySwingTradingStrategy}>
+          <button
+            disabled={!file}
+            onClick={() => {
+              applySwingTradingStrategy();
+              document.getElementById("swing_modal").showModal();
+            }}
+          >
             <AwesomeButton
               type={!file ? "error" : "primary"}
               style={{ width: "100%" }}

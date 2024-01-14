@@ -1,19 +1,19 @@
 import React from "react";
 
-const TurtleModal = ({
+const MeanReversionModal = ({
   initialCapital,
   endCapital,
   fileName,
-  turtlePositionLogs,
+  meanReversionPositionLogs,
 }) => {
   return (
     <>
-      <dialog id="turtle_modal" className="modal   text-white">
+      <dialog id="mean_reversion_modal" className="modal   text-white">
         <div className="modal-box 	bg-sky-950">
           <div className="sticky top-0 z-50  bg-white text-sky-950 pt-2">
             <div className="flex justify-between items-center mb-1 ">
               <h2 className="text-center font-bold text-md mb-1 pl-2">
-                Turtle Trading Strategy Results ({fileName})
+                Mean Reversion Trading Strategy Results ({fileName})
               </h2>
               <div className="modal-action -mt-1 pr-2">
                 <form method="dialog">
@@ -32,7 +32,7 @@ const TurtleModal = ({
             See more details:
           </h3>
           <div className="grid grid-cols-1 gap-2 font-light">
-            {turtlePositionLogs?.map((data, index) => (
+            {meanReversionPositionLogs?.map((data, index) => (
               <React.Fragment key={index}>
                 <span>{data}</span>
                 {index % 2 === 1 && <div className="mb-8" />}
@@ -48,4 +48,4 @@ const TurtleModal = ({
   );
 };
 
-export default TurtleModal;
+export default MeanReversionModal;

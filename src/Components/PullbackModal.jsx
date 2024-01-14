@@ -12,7 +12,7 @@ const PullbackModal = ({
         <div className="modal-box 	bg-sky-950">
           <div className="sticky top-0 z-50  bg-white text-sky-950 pt-2">
             <div className="flex justify-between items-center mb-1 ">
-              <h2 className="text-center font-bold text-xl mb-1 pl-2">
+              <h2 className="text-center font-bold text-md mb-1 pl-2">
                 Pullback Trading Strategy Results ({fileName})
               </h2>
               <div className="modal-action -mt-1 pr-2">
@@ -32,7 +32,7 @@ const PullbackModal = ({
             See more details:
           </h3>
           <div className="grid grid-cols-1 gap-2 font-light">
-            {pullbackPositionLogs.map((data, index) => (
+            {pullbackPositionLogs?.map((data, index) => (
               <React.Fragment key={index}>
                 <span>{data}</span>
                 {index % 2 === 1 && <div className="mb-8" />}
