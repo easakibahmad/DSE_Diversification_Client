@@ -116,7 +116,7 @@ const Turtle = () => {
       });
 
       setData(transformedData);
-      console.log(JSON.stringify(data, null, 2));
+      // console.log(JSON.stringify(data, null, 2));
 
       toast.success("Data parsed successfully");
     };
@@ -484,7 +484,10 @@ const Turtle = () => {
     const prices = data.map((item) => item.Price);
 
     // Calculate Z-score, RSI, and Stochastic indicators
-    const zScoreValues = calculateZScore(prices);
+    const zScoreValues = calculateZScore( prices );
+    
+    console.log( zScoreValues );
+    
     const rsiValues = calculateRSI(prices);
     const stochasticValues = calculateStochastic(data);
 
@@ -731,12 +734,12 @@ const Turtle = () => {
         {/* CSV File dropdown */}
         <div>
           <label className="flex flex-col justify-start">
-            <span className="text-xl font-bold mb-2">Choose CSV File:</span>
+            <span className="text-xl font-bold mb-2">Choose Company Data:</span>
             <select
               className="text-black px-2 py-1 rounded outline-none"
               // onChange={handleFileChange}
             >
-              <option value="">Select a file</option>
+              <option value="">RPBK</option>
 
               <option value="select">select</option>
               {/* Add more options as needed */}

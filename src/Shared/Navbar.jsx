@@ -59,11 +59,14 @@ const Navbar = () => {
               <Link to="/services">Our Services</Link>
             </li>
             <li>
-              <a>Investing Basics</a>
+              <Link to="/investing-basics">Investing Basics</Link>
             </li>
             <li>
-              <a>DSE Stocks</a>
+              <Link to="/basic-functionality">Investing Functionality</Link>
             </li>
+            {/* <li>
+              <a>DSE Stocks</a>
+            </li> */}
             <li>
               <a>About Us</a>
             </li>
@@ -82,15 +85,22 @@ const Navbar = () => {
             </Link>
           </li>
           <li>
-            <Link>
+            <Link to="/investing-basics">
               <AwesomeButton type="secondary">Investing Basics </AwesomeButton>
             </Link>
           </li>
           <li>
+            <Link to="/basic-functionality">
+              <AwesomeButton type="secondary">
+                Investing Functionality{" "}
+              </AwesomeButton>
+            </Link>
+          </li>
+          {/* <li>
             <Link>
               <AwesomeButton type="secondary">DSE Stocks</AwesomeButton>
             </Link>
-          </li>
+          </li> */}
           <li>
             <Link>
               <AwesomeButton type="secondary">About Us</AwesomeButton>
