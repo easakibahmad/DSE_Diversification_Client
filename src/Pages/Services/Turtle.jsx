@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Papa from "papaparse";
 import "../../Styles/Turtle.css";
 import "../../Styles/ServiceSelectionInput.css";
@@ -9,6 +9,10 @@ import toast, { Toaster } from "react-hot-toast";
 import PullbackModal from "../../Components/PullbackModal";
 import MeanReversionModal from "../../Components/MeanReversionModal";
 import SwingModal from "../../Components/SwingModal";
+// import FWFD from "../../data/FWFD.csv";
+// import SIMT from "../../data/SIMT.csv";
+// import PLIC from "../../data/PLIC.csv";
+// import RPBK from "../../data/RPBK.csv";
 
 const allowedExtensions = ["csv"];
 
@@ -29,6 +33,23 @@ const Turtle = () => {
     []
   );
   const [swingPositionLogs, setSwingPositionLogs] = useState([]);
+
+  const [stockData, setStockData] = useState([]);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await fetch("data.json"); // Replace with the actual path to your data.json file
+        const data = await response.json();
+        setStockData(data); // Assuming the structure of your JSON
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  console.log(stockData);
 
   const handleInputChange = (event) => {
     const inputValue = event.target.value;
@@ -95,6 +116,8 @@ const Turtle = () => {
       });
 
       setData(transformedData);
+      console.log(JSON.stringify(data, null, 2));
+
       toast.success("Data parsed successfully");
     };
     reader.readAsText(file);
@@ -709,10 +732,13 @@ const Turtle = () => {
         <div>
           <label className="flex flex-col justify-start">
             <span className="text-xl font-bold mb-2">Choose CSV File:</span>
-            <select className="text-black px-2 py-1 rounded outline-none">
-              <option value="file1.csv">File 1</option>
-              <option value="file2.csv">File 2</option>
-              <option value="file3.csv">File 3</option>
+            <select
+              className="text-black px-2 py-1 rounded outline-none"
+              // onChange={handleFileChange}
+            >
+              <option value="">Select a file</option>
+
+              <option value="select">select</option>
               {/* Add more options as needed */}
             </select>
           </label>
